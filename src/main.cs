@@ -32,16 +32,27 @@ class Program
                     break;
                 default:
                     TestCommandResults resl = tester.TestCommand(split[0]);
+                    var argsSplit = input.Split(split[0]);
+                    string argsString = "";
                     if (resl.Found)
                     {
-                        if (split.Count > 2)
-                        {
-                            Process.Start(resl.ExecutablePath, split[1..]).WaitForExit();
-                        }
-                        else
-                        {
-                            Process.Start(resl.ExecutablePath).WaitForExit();
-                        }
+                        if (argsSplit.Length > 1)
+                            argsString = argsSplit[1];
+                        
+                        
+                        Process.Start(resl.ExecutablePath, argsString).WaitForExit();
+                        
+
+                        //Commented for now. This uses original shell which feels a bit like cheating.
+                        /*var psi = new ProcessStartInfo { FileName = "/bin/sh",
+
+                            Arguments = $"-c \"{input}\"",
+
+                            UseShellExecute = false };
+
+                        Process.Start(psi)?.WaitForExit();*/
+
+
                     }
                     else
                     {

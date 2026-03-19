@@ -27,6 +27,7 @@ public class Tester
                 if (canExecute)
                 {
                     result.ExecutablePath = executePath;
+                    result.PathDir = searchLocation;
                     result.Found = true;
                     return result;
                 }
