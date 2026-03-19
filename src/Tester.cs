@@ -40,6 +40,7 @@ public class Tester
     {
         switch (input)
         {
+            case "cd":
             case "pwd":
             case "type":
             case "exit":

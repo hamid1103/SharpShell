@@ -24,6 +24,9 @@ class Program
             //split[0] should be the command.
             switch (split[0])
             {
+                case "cd":
+                    CDCommandClass.CDCommand(split[1]);
+                    break;
                 case "pwd":
                     string workDir = Directory.GetCurrentDirectory();
                     Console.WriteLine(workDir);
