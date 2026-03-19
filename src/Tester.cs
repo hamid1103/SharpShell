@@ -11,7 +11,31 @@ public class Tester
         PathSearchLocations = PATH.Split(":").ToList();
     }
 
-    public void TestCommand(string input)
+    public TestCommandResults TestCommand(string input)
+    {
+        TestCommandResults result = new();
+        result.Found = false;
+        foreach (var searchLocation in PathSearchLocations)
+        {
+            string executePath = Path.Combine(searchLocation, input);
+            if (Path.Exists(executePath))
+            {
+                UnixFileMode mode = File.GetUnixFileMode(executePath);
+                bool canExecute =
+                    (mode & (UnixFileMode.UserExecute | UnixFileMode.GroupExecute |
+                             UnixFileMode.OtherExecute)) != 0;
+                if (canExecute)
+                {
+                    result.ExecutablePath = executePath;
+                    result.Found = true;
+                    return result;
+                }
+            }
+        }
+        return result;
+    }
+
+    public void TypeCommand(string input)
     {
         switch (input)
         {

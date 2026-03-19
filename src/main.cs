@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 class Program
 {
     static void Main()
@@ -23,13 +25,28 @@ class Program
             switch (split[0])
             {
                 case "type":
-                    tester.TestCommand(split[1]);
+                    tester.TypeCommand(split[1]);
                     break;
                 case "echo":
                     Console.Write($"{input[5..]}\n");
                     break;
                 default:
-                    Console.WriteLine($"{input}: command not found");
+                    TestCommandResults resl = tester.TestCommand(split[0]);
+                    if (resl.Found)
+                    {
+                        if (split.Count > 2)
+                        {
+                            Process.Start(resl.ExecutablePath, split[2..]);
+                        }
+                        else
+                        {
+                            Process.Start(resl.ExecutablePath);
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"{input}: command not found");
+                    }
                     break;
             }
             
