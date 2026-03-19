@@ -36,6 +36,7 @@ class Program
                     {
                         if (split.Count > 2)
                         {
+                            Console.WriteLine();
                             Process.Start(resl.ExecutablePath, split[1..]);
                         }
                         else
