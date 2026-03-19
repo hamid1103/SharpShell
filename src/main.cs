@@ -36,7 +36,7 @@ class Program
                     {
                         if (split.Count > 2)
                         {
-                            Process.Start(resl.ExecutablePath, split[2..]);
+                            Process.Start(resl.ExecutablePath, split[1..]);
                         }
                         else
                         {
