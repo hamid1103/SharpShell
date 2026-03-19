@@ -24,6 +24,10 @@ class Program
             //split[0] should be the command.
             switch (split[0])
             {
+                case "pwd":
+                    string workDir = Directory.GetCurrentDirectory();
+                    Console.WriteLine(workDir);
+                    break;
                 case "type":
                     tester.TypeCommand(split[1]);
                     break;
@@ -46,18 +50,9 @@ class Program
 
                             FileName = "/bin/sh",
                             Arguments =
-
                                 $"-c \"exec -a {split[0]} {resl.ExecutablePath}{args}\"",
-
                             UseShellExecute = false
                         };
-                        
-                        //Commented for now. This uses original shell which feels a bit like cheating.
-                        /*var psi = new ProcessStartInfo { FileName = "/bin/sh",
-
-                            Arguments = $"-c \"{input}\"",
-
-                            UseShellExecute = false };*/
 
                         Process.Start(psi)?.WaitForExit();
 
