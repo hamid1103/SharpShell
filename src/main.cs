@@ -2,7 +2,12 @@ class Program
 {
     static void Main()
     {
-        Tester tester = new Tester();
+        // Source - https://stackoverflow.com/a/185214
+        // Posted by Patrick Desjardins, modified by community. See post 'Timeline' for change history
+        // Retrieved 2026-03-19, License - CC BY-SA 4.0
+        var PATHValue = System.Environment.GetEnvironmentVariable("PATH");
+        
+        Tester tester = new Tester(PATHValue);
         
         while (true)
         {
