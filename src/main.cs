@@ -8,6 +8,7 @@ class Program
         // Posted by Patrick Desjardins, modified by community. See post 'Timeline' for change history
         // Retrieved 2026-03-19, License - CC BY-SA 4.0
         var PATHValue = System.Environment.GetEnvironmentVariable("PATH");
+        var UserHomePath = Environment.GetEnvironmentVariable("HOME");
         
         Tester tester = new Tester(PATHValue);
         
@@ -25,6 +26,11 @@ class Program
             switch (split[0])
             {
                 case "cd":
+                    if (split.Count == 1)
+                    {
+                        Console.WriteLine("cd: invalid path");
+                        break;
+                    }
                     CDCommandClass.CDCommand(split[1]);
                     break;
                 case "pwd":

@@ -3,19 +3,21 @@ public class CDCommandClass
     public static void CDCommand(string Dir)
     {
         //Path handling comes here. Later. I think.
-        
+        string FixedDir;
+        FixedDir = Dir.Replace("~", Environment.GetEnvironmentVariable("HOME"));
         //check if valid firts
-        if (Directory.Exists(Dir))
+        if (Directory.Exists(FixedDir))
         {
-            Directory.SetCurrentDirectory(Dir);
+            
+            Directory.SetCurrentDirectory(FixedDir);
         }
-        else if (File.Exists(Dir))
+        else if (File.Exists(FixedDir))
         {
-            Console.WriteLine($"cd: {Dir}: Path is a file");
+            Console.WriteLine($"cd: {FixedDir}: Path is a file");
         }
         else
         {
-            Console.WriteLine($"cd: {Dir}: No such file or directory");
+            Console.WriteLine($"cd: {FixedDir}: No such file or directory");
         }
     }
 }
