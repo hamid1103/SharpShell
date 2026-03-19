@@ -4,7 +4,7 @@ class Program
     {
         while (true)
         {
-            Console.WriteLine("$ ");
+            Console.Write("$ ");
             string input = Console.ReadLine();
             Console.WriteLine($"{input}: command not found");   
         }
