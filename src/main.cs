@@ -36,21 +36,30 @@ class Program
                     string argsString = "";
                     if (resl.Found)
                     {
-                        if (argsSplit.Length > 1)
-                            argsString = argsSplit[1];
-                        
-                        
-                        Process.Start(resl.ExecutablePath, argsString).WaitForExit();
-                        
+                        string args = "";
 
+                        for (int i = 1; i < split.Count; i++) {
+                            args += $" \"{split[i]}\"";
+                        }
+
+                        var psi = new ProcessStartInfo {
+
+                            FileName = "/bin/sh",
+                            Arguments =
+
+                                $"-c \"exec -a {split[0]} {resl.ExecutablePath}{args}\"",
+
+                            UseShellExecute = false
+                        };
+                        
                         //Commented for now. This uses original shell which feels a bit like cheating.
                         /*var psi = new ProcessStartInfo { FileName = "/bin/sh",
 
                             Arguments = $"-c \"{input}\"",
 
-                            UseShellExecute = false };
+                            UseShellExecute = false };*/
 
-                        Process.Start(psi)?.WaitForExit();*/
+                        Process.Start(psi)?.WaitForExit();
 
 
                     }
