@@ -7,8 +7,22 @@ class Program
             Console.Write("$ ");
             string input = Console.ReadLine();
             if (input == "exit")
+            {
                 break;
-            Console.WriteLine($"{input}: command not found");
+            }else if (input.StartsWith("echo "))
+            {
+                Console.Write($"{input[5..]}\n");
+            }
+            else
+            {
+                switch (input)
+                {
+                    default:
+                        Console.WriteLine($"{input}: command not found");
+                        break;
+                }
+            }
+            
         }
     }
 }
