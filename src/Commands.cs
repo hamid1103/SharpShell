@@ -23,6 +23,18 @@ public class Commands
         }
     }
 
+    public static string Escape(string arg)
+    {
+        return $"'{arg.Replace("'", "'\\''")}'";
+    }
+    
+    public static void EchoCommand(List<string> argString)
+    {
+        
+        //Old one
+        Console.Write(string.Join(" ", argString.Skip(1)) + "\n");
+    }
+    
     public static void EchoCommand(string argString)
     {
         

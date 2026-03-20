@@ -18,35 +18,35 @@ class Program
             Console.Write("$ ");
             string input = Console.ReadLine();
             List<string> split = input.Split().ToList();
+            List<string> args = ParseArgs(input);
+            
             if (input == "exit")
             {
                 break;
             }
             
             //split[0] should be the command.
-            switch (split[0])
+            switch (args[0])
             {
                 case "cd":
-                    if (split.Count == 1)
+                    if (args.Count == 1)
                     {
                         Console.WriteLine("cd: invalid path");
                         break;
                     }
-                    Commands.CDCommand(split[1]);
+                    Commands.CDCommand(args[1]);
                     break;
                 case "pwd":
                     string workDir = Directory.GetCurrentDirectory();
                     Console.WriteLine(workDir);
                     break;
                 case "type":
-                    tester.TypeCommand(split[1]);
+                    tester.TypeCommand(args[1]);
                     break;
                 case "echo":
-                    Commands.EchoCommand(input[5..]);
+                    Commands.EchoCommand(args);
                     break;
                 default:
-                    List<string> args = ParseArgs(input);
-                    
                     TestCommandResults resl = tester.TestCommand(split[0]);
                     
                     if (resl.Found)
