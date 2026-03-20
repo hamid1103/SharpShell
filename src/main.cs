@@ -103,7 +103,7 @@ class Program
                 continue;
             }
             
-            if (c == Convert.ToChar("\"") && !isEscaping)
+            if (c == Convert.ToChar("\"") && !isEscaping && !inSingleQuote)
             {
                 inDoubleQuote = !inDoubleQuote;
                 continue;
