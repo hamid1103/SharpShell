@@ -97,7 +97,7 @@ class Program
                 continue;
             }
 
-            if (c == Convert.ToChar("\\") && !inDoubleQuote && !inSingleQuote)
+            if (c == Convert.ToChar("\\") && !inDoubleQuote && !inSingleQuote && !isEscaping)
             {
                 isEscaping = true;
                 continue;
@@ -134,7 +134,6 @@ class Program
                 else
                 {
                     //is escaping
-                    
                     if (stringUtils.HasSpecialMeaning(c))
                     {
                         if ((i + 1) > input.Length)
@@ -155,7 +154,14 @@ class Program
                     }
                     else
                     {
-                        current.Append(c);
+                        if (input[i].ToString() == "\\")
+                        {
+                            current.Append("\\\\");
+                        }
+                        else
+                        {
+                            current.Append(c);
+                        }
                     }
                     isEscaping = !isEscaping;
                 }
