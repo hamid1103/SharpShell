@@ -54,7 +54,7 @@ class Program
 
                         var psi = new ProcessStartInfo
                         {
-                            FileName = resl.ExecutablePath,
+                            FileName = args[0],
                             UseShellExecute = false
                         };
 
