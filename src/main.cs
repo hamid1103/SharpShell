@@ -114,8 +114,6 @@ class Program
                 if (isEscaping)
                 {
                     current.Append(c);
-                    args.Add(current.ToString());
-                    current.Clear();
                     isEscaping = !isEscaping;
                 }else if (inDoubleQuote)
                 {
