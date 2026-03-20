@@ -154,14 +154,7 @@ class Program
                     }
                     else
                     {
-                        if (input[i].ToString() == "\\")
-                        {
-                            current.Append("\\\\");
-                        }
-                        else
-                        {
                             current.Append(c);
-                        }
                     }
                     isEscaping = !isEscaping;
                 }
