@@ -1,4 +1,6 @@
-public class CDCommandClass
+using System.Text.RegularExpressions;
+
+public class Commands
 {
     public static void CDCommand(string Dir)
     {
@@ -19,5 +21,12 @@ public class CDCommandClass
         {
             Console.WriteLine($"cd: {FixedDir}: No such file or directory");
         }
+    }
+
+    public static void EchoCommand(string argString)
+    {
+        
+        //Old one
+        Console.Write(string.Join(" ", argString) + "\n");
     }
 }
