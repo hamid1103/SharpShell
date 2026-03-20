@@ -63,14 +63,6 @@ class Program
                             psi.ArgumentList.Add(args[i]);
                         }
                         
-                        /*var psi = new ProcessStartInfo {
-
-                            FileName = "/bin/sh",
-                            Arguments =
-                                $"-c \"exec -a {args[0]} {resl.ExecutablePath}{args}\"",
-                            UseShellExecute = false
-                        };*/
-
                         Process.Start(psi)?.WaitForExit();
 
 
@@ -91,20 +83,31 @@ class Program
         var current = new StringBuilder();
 
         bool inSingleQuote = false;
+        bool inDoubleQuote = false;
 
         for (int i = 0; i < input.Length; i++)
         {
             char c = input[i];
             //Can't directly compare char to string
-            if (c == Convert.ToChar("\'"))
+            if (c == Convert.ToChar("\'") && !inDoubleQuote)
             {
                 inSingleQuote = !inSingleQuote;
+                continue;
+            }
+            
+            if (c == Convert.ToChar("\""))
+            {
+                inDoubleQuote = !inDoubleQuote;
                 continue;
             }
 
             if (char.IsWhiteSpace(c) && !inSingleQuote)
             {
-                if (current.Length > 0)
+                if (inDoubleQuote)
+                {
+                    //if in double quote, just add the whitespace
+                    current.Append(c);
+                }else if (current.Length > 0)
                 {
                     args.Add(current.ToString());
                     current.Clear();
