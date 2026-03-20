@@ -79,23 +79,31 @@ class Program
 
     public static List<string> ParseArgs(string input)
     {
+        StringUtils stringUtils = new StringUtils();
         List<string> args = new();
         var current = new StringBuilder();
 
         bool inSingleQuote = false;
         bool inDoubleQuote = false;
+        bool isEscaping = false;
 
         for (int i = 0; i < input.Length; i++)
         {
             char c = input[i];
             //Can't directly compare char to string
-            if (c == Convert.ToChar("\'") && !inDoubleQuote)
+            if (c == Convert.ToChar("\'") && !inDoubleQuote && !isEscaping)
             {
                 inSingleQuote = !inSingleQuote;
                 continue;
             }
+
+            if (c == Convert.ToChar("\\") && !inDoubleQuote && !inSingleQuote)
+            {
+                isEscaping = true;
+                continue;
+            }
             
-            if (c == Convert.ToChar("\""))
+            if (c == Convert.ToChar("\"") && !isEscaping)
             {
                 inDoubleQuote = !inDoubleQuote;
                 continue;
@@ -103,7 +111,13 @@ class Program
 
             if (char.IsWhiteSpace(c) && !inSingleQuote)
             {
-                if (inDoubleQuote)
+                if (isEscaping)
+                {
+                    current.Append(c);
+                    args.Add(current.ToString());
+                    current.Clear();
+                    isEscaping = !isEscaping;
+                }else if (inDoubleQuote)
                 {
                     //if in double quote, just add the whitespace
                     current.Append(c);
@@ -115,7 +129,38 @@ class Program
             }
             else
             {
-                current.Append(c);
+                if (!isEscaping)
+                {
+                    current.Append(c);
+                }
+                else
+                {
+                    //is escaping
+                    
+                    if (stringUtils.HasSpecialMeaning(c))
+                    {
+                        if ((i + 1) > input.Length)
+                        {
+                            string isDoubleCheckString = c.ToString() + input[i+1];
+                            Console.WriteLine("Escaping, with special meaning: " + isDoubleCheckString);
+                            if (stringUtils.IsDoubleSpecial(isDoubleCheckString))
+                            {
+                                current.Append(c);
+                                current.Append(input[i + 1]);
+                                i++;
+                            }
+                        }
+                        else
+                        {
+                            current.Append(c);
+                        }
+                    }
+                    else
+                    {
+                        current.Append(c);
+                    }
+                    isEscaping = !isEscaping;
+                }
             }
         }
 
