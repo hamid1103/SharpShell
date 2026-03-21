@@ -108,6 +108,7 @@ class Program
                                     psi.ArgumentList.Add(args[i]);
                                 }
                                 Process.Start(psi)?.WaitForExit();
+                                Console.WriteLine();
                             }
                         }
                         else
