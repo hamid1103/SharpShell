@@ -97,7 +97,7 @@ class Program
                 continue;
             }
 
-            if (c == Convert.ToChar("\\") && !inDoubleQuote && !inSingleQuote && !isEscaping)
+            if (c == Convert.ToChar("\\") && !inSingleQuote && !isEscaping)
             {
                 isEscaping = true;
                 continue;
