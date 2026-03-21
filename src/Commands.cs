@@ -32,16 +32,12 @@ public class Commands
         List<string> echoStringList = new();
         foreach (var arg in argString)
         {
-            if (arg == ">" || arg == "1>")
+            if (arg == ">" || arg == "1>" ||arg == "2>")
             {
                 int lastIndex = echoStringList.FindLastIndex(x => x == echoStringList.Last());
                 echoStringList[lastIndex] = echoStringList[lastIndex] + "\n";
                 break;
             }
-
-            if (arg == "2>")
-                break;
-            
             echoStringList.Add(arg);
         }
 
