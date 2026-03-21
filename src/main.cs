@@ -36,8 +36,6 @@ class Program
                 RedirectStdOut = true;
                 stdOutRedirectionIndex = args.FindIndex(arg => arg is ">" or "1>");
                 redirectOutputFile = args[stdOutRedirectionIndex + 1];
-                Console.WriteLine(
-                    "stdout redirect index = " + stdOutRedirectionIndex + $"filename {redirectOutputFile}");
             }
 
             if (args.Contains("2>"))
@@ -45,8 +43,6 @@ class Program
                 RedirectErrorOut = true;
                 stdErrorRedirectionIndex = args.FindIndex(arg => arg is "2>");
                 redirectErrorFile = args[stdErrorRedirectionIndex + 1];
-                Console.WriteLine("error redirect index = " + stdErrorRedirectionIndex +
-                                  $" filename {redirectErrorFile}");
             }
 
             if (args.Count > 0)
