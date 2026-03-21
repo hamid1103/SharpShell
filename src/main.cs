@@ -109,7 +109,6 @@ class Program
                                 }
                                 Process.Start(psi)?.WaitForExit();
                             }
-                            Console.WriteLine();
                         }
                         else
                         {
