@@ -21,7 +21,7 @@ class Program
             string redirectErrorFile = "";
             int stdOutRedirectionIndex = 0;
             int stdErrorRedirectionIndex = 0;
-            
+
             Console.Write("$ ");
             string input = Console.ReadLine();
             List<string> args = ParseArgs(input);
@@ -36,6 +36,8 @@ class Program
                 RedirectStdOut = true;
                 stdOutRedirectionIndex = args.FindIndex(arg => arg is ">" or "1>");
                 redirectOutputFile = args[stdOutRedirectionIndex + 1];
+                Console.WriteLine(
+                    "stdout redirect index = " + stdOutRedirectionIndex + $"filename {redirectOutputFile}");
             }
 
             if (args.Contains("2>"))
@@ -43,6 +45,8 @@ class Program
                 RedirectErrorOut = true;
                 stdErrorRedirectionIndex = args.FindIndex(arg => arg is "2>");
                 redirectErrorFile = args[stdErrorRedirectionIndex + 1];
+                Console.WriteLine("error redirect index = " + stdErrorRedirectionIndex +
+                                  $" filename {redirectErrorFile}");
             }
 
             if (args.Count > 0)
@@ -89,35 +93,34 @@ class Program
                                 UseShellExecute = false
                             };
 
-                            if (RedirectStdOut)
+                            string stdout = "";
+                            string stdErr = "";
+
+                            if (RedirectStdOut || RedirectErrorOut)
                             {
-                                for (int i = 1; i < stdOutRedirectionIndex; i++)
+                                int cutoffIndex = RedirectStdOut
+                                    ? stdOutRedirectionIndex
+                                    : stdErrorRedirectionIndex;
+                                for (int i = 1; i < cutoffIndex; i++)
                                 {
                                     psi.ArgumentList.Add(args[i]);
-                                }
-                                psi.RedirectStandardOutput = true;
-                                psi.RedirectStandardError = true;
-                                Process prc = Process.Start(psi);
-                                string stdout = prc.StandardOutput.ReadToEnd();
-                                string stdErr = prc.StandardError.ReadToEnd();
-                                
-                                prc?.WaitForExit();
-                                if (!string.IsNullOrEmpty(stdErr))
-                                {
-                                    if (RedirectStdOut)
-                                    {
-                                        File.WriteAllText(args[stdErrorRedirectionIndex+1], stdErr);
-                                    }
-                                    else
-                                    {
-                                        Console.Write(stdErr);
-                                    }
+                                    Console.WriteLine(args[i]);
                                 }
 
-                                if (!string.IsNullOrEmpty(stdout))
+                                if (RedirectStdOut)
                                 {
-                                    File.WriteAllText(args[stdOutRedirectionIndex+1], stdout);
+                                    psi.RedirectStandardOutput = true;
                                 }
+
+                                if (RedirectErrorOut)
+                                {
+                                    psi.RedirectStandardError = true;
+                                }
+
+                                Process prc = Process.Start(psi);
+                                stdErr = RedirectErrorOut ? prc.StandardError.ReadToEnd() : "";
+                                stdout = RedirectStdOut ? prc.StandardOutput.ReadToEnd() : "";
+                                prc?.WaitForExit();
                             }
                             else
                             {
@@ -125,7 +128,18 @@ class Program
                                 {
                                     psi.ArgumentList.Add(args[i]);
                                 }
+
                                 Process.Start(psi)?.WaitForExit();
+                            }
+
+                            if (!string.IsNullOrEmpty(stdErr))
+                            {
+                                File.WriteAllText(redirectErrorFile, stdErr);
+                            }
+
+                            if (!string.IsNullOrEmpty(stdout))
+                            {
+                                File.WriteAllText(args[stdOutRedirectionIndex + 1], stdout);
                             }
                         }
                         else
