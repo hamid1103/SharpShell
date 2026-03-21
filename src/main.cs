@@ -100,7 +100,6 @@ class Program
                                 for (int i = 1; i < cutoffIndex; i++)
                                 {
                                     psi.ArgumentList.Add(args[i]);
-                                    Console.WriteLine(args[i]);
                                 }
 
                                 if (RedirectStdOut)
