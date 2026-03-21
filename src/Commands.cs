@@ -38,7 +38,7 @@ public class Commands
                 echoStringList[lastIndex] = echoStringList[lastIndex] + "\n";
                 break;
             }
-
+            
             echoStringList.Add(arg);
         }
 

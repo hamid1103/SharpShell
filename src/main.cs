@@ -16,8 +16,11 @@ class Program
         while (true)
         {
             bool RedirectStdOut = false;
+            bool RedirectErrorOut = false;
             string redirectOutputFile = "";
-            int redirectionIndex = 0;
+            string redirectErrorFile = "";
+            int stdOutRedirectionIndex = 0;
+            int stdErrorRedirectionIndex = 0;
             
             Console.Write("$ ");
             string input = Console.ReadLine();
@@ -31,8 +34,15 @@ class Program
             if (args.Contains(">") || args.Contains("1>"))
             {
                 RedirectStdOut = true;
-                redirectionIndex = args.FindIndex(arg => arg is ">" or "1>");
-                redirectOutputFile = args[redirectionIndex + 1];
+                stdOutRedirectionIndex = args.FindIndex(arg => arg is ">" or "1>");
+                redirectOutputFile = args[stdOutRedirectionIndex + 1];
+            }
+
+            if (args.Contains("2>"))
+            {
+                RedirectErrorOut = true;
+                stdErrorRedirectionIndex = args.FindIndex(arg => arg is "2>");
+                redirectErrorFile = args[stdErrorRedirectionIndex + 1];
             }
 
             if (args.Count > 0)
@@ -81,7 +91,7 @@ class Program
 
                             if (RedirectStdOut)
                             {
-                                for (int i = 1; i < redirectionIndex; i++)
+                                for (int i = 1; i < stdOutRedirectionIndex; i++)
                                 {
                                     psi.ArgumentList.Add(args[i]);
                                 }
@@ -94,12 +104,19 @@ class Program
                                 prc?.WaitForExit();
                                 if (!string.IsNullOrEmpty(stdErr))
                                 {
-                                    Console.Write(stdErr);
+                                    if (RedirectStdOut)
+                                    {
+                                        File.WriteAllText(args[stdErrorRedirectionIndex+1], stdErr);
+                                    }
+                                    else
+                                    {
+                                        Console.Write(stdErr);
+                                    }
                                 }
 
                                 if (!string.IsNullOrEmpty(stdout))
                                 {
-                                    File.WriteAllText(args[redirectionIndex+1], stdout);
+                                    File.WriteAllText(args[stdOutRedirectionIndex+1], stdout);
                                 }
                             }
                             else
