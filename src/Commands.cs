@@ -38,6 +38,9 @@ public class Commands
                 echoStringList[lastIndex] = echoStringList[lastIndex] + "\n";
                 break;
             }
+
+            if (arg == "2>")
+                break;
             
             echoStringList.Add(arg);
         }
