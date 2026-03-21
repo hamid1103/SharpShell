@@ -10,7 +10,6 @@ public class Commands
         //check if valid firts
         if (Directory.Exists(FixedDir))
         {
-            
             Directory.SetCurrentDirectory(FixedDir);
         }
         else if (File.Exists(FixedDir))
@@ -27,18 +26,20 @@ public class Commands
     {
         return $"'{arg.Replace("'", "'\\''")}'";
     }
-    
-    public static void EchoCommand(List<string> argString)
+
+    public static void EchoCommand(List<string> argString, out string output)
     {
-        
-        //Old one
-        Console.Write(string.Join(" ", argString.Skip(1)) + "\n");
-    }
-    
-    public static void EchoCommand(string argString)
-    {
-        
-        //Old one
-        Console.Write(string.Join(" ", argString) + "\n");
+        List<string> echoStringList = new();
+        foreach (var arg in argString)
+        {
+            if (arg == ">" || arg == "1>")
+            {
+                break;
+            }
+
+            echoStringList.Add(arg);
+        }
+
+        output = string.Join(" ", echoStringList.Skip(1));
     }
 }

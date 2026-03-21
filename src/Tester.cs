@@ -5,6 +5,7 @@ public class Tester
 {
     private readonly string PATH;
     private List<string> PathSearchLocations;
+
     public Tester(string PATH)
     {
         this.PATH = PATH;
@@ -33,6 +34,7 @@ public class Tester
                 }
             }
         }
+
         return result;
     }
 
@@ -71,8 +73,9 @@ public class Tester
                 if (!found)
                 {
                     //If not, not found
-                    Console.WriteLine($"{input}: not found");   
+                    Console.WriteLine($"{input}: not found");
                 }
+
                 break;
         }
     }

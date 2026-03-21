@@ -22,12 +22,12 @@ public class StringUtils
     {
         return Convert.ToChar(c);
     }
-    
+
     public bool HasSpecialMeaning(char c)
     {
         if (specialChars.Contains(c))
             return true;
-        
+
         return false;
     }
 
@@ -35,7 +35,7 @@ public class StringUtils
     {
         if (s == "<?" || s == "?>" || s == "<%" || s == "%>" || s == "/*" || s == "*/")
             return true;
-        
+
         return false;
     }
 }

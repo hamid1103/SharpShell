@@ -10,68 +10,115 @@ class Program
         // Retrieved 2026-03-19, License - CC BY-SA 4.0
         var PATHValue = System.Environment.GetEnvironmentVariable("PATH");
         var UserHomePath = Environment.GetEnvironmentVariable("HOME");
-        
+
         Tester tester = new Tester(PATHValue);
-        
+
         while (true)
         {
+            bool RedirectStdOut = false;
+            string redirectOutputFile = "";
+            int redirectionIndex = 0;
+            
             Console.Write("$ ");
             string input = Console.ReadLine();
             List<string> args = ParseArgs(input);
-            
+
             if (input == "exit")
             {
                 break;
             }
-            
-            //split[0] should be the command.
-            switch (args[0])
+
+            if (args.Contains(">") || args.Contains("1>"))
             {
-                case "cd":
-                    if (args.Count == 1)
-                    {
-                        Console.WriteLine("cd: invalid path");
-                        break;
-                    }
-                    Commands.CDCommand(args[1]);
-                    break;
-                case "pwd":
-                    string workDir = Directory.GetCurrentDirectory();
-                    Console.WriteLine(workDir);
-                    break;
-                case "type":
-                    tester.TypeCommand(args[1]);
-                    break;
-                case "echo":
-                    Commands.EchoCommand(args);
-                    break;
-                default:
-                    TestCommandResults resl = tester.TestCommand(args[0]);
-                    if (resl.Found)
-                    {
-
-                        var psi = new ProcessStartInfo
-                        {
-                            FileName = args[0],
-                            UseShellExecute = false
-                        };
-
-                        for (int i = 1; i < args.Count; i++)
-                        {
-                            psi.ArgumentList.Add(args[i]);
-                        }
-                        
-                        Process.Start(psi)?.WaitForExit();
-
-
-                    }
-                    else
-                    {
-                        Console.WriteLine($"{input}: command not found");
-                    }
-                    break;
+                RedirectStdOut = true;
+                redirectionIndex = args.FindIndex(arg => arg is ">" or "1>");
+                redirectOutputFile = args[redirectionIndex + 1];
             }
-            
+
+            if (args.Count > 0)
+            {
+                //split[0] should be the command.
+                switch (args[0])
+                {
+                    case "cd":
+                        if (args.Count == 1)
+                        {
+                            Console.WriteLine("cd: invalid path");
+                            break;
+                        }
+
+                        Commands.CDCommand(args[1]);
+                        break;
+                    case "pwd":
+                        string workDir = Directory.GetCurrentDirectory();
+                        Console.WriteLine(workDir);
+                        break;
+                    case "type":
+                        tester.TypeCommand(args[1]);
+                        break;
+                    case "echo":
+                        Commands.EchoCommand(args, out var echoOutput);
+                        if (RedirectStdOut)
+                        {
+                            File.WriteAllText(Path.Combine(Directory.GetCurrentDirectory(), redirectOutputFile),
+                                echoOutput);
+                        }
+                        else
+                        {
+                            Console.WriteLine(echoOutput);
+                        }
+
+                        break;
+                    default:
+                        TestCommandResults resl = tester.TestCommand(args[0]);
+                        if (resl.Found)
+                        {
+                            var psi = new ProcessStartInfo
+                            {
+                                FileName = args[0],
+                                UseShellExecute = false
+                            };
+
+                            if (RedirectStdOut)
+                            {
+                                for (int i = 1; i < redirectionIndex; i++)
+                                {
+                                    psi.ArgumentList.Add(args[i]);
+                                }
+                                psi.RedirectStandardOutput = true;
+                                psi.RedirectStandardError = true;
+                                Process prc = Process.Start(psi);
+                                string stdout = prc.StandardOutput.ReadToEnd();
+                                string stdErr = prc.StandardError.ReadToEnd();
+                                
+                                prc?.WaitForExit();
+                                if (!string.IsNullOrEmpty(stdErr))
+                                {
+                                    Console.WriteLine(stdErr);
+                                }
+                                else
+                                {
+                                    File.WriteAllText(args[redirectionIndex+1], stdout);
+                                }
+                            }
+                            else
+                            {
+                                for (int i = 1; i < args.Count; i++)
+                                {
+                                    psi.ArgumentList.Add(args[i]);
+                                }
+                                Process.Start(psi)?.WaitForExit();
+                            }
+                            Console.WriteLine();
+                        }
+                        else
+                        {
+                            Console.WriteLine($"{input}: command not found");
+                        }
+
+                        break;
+                }
+            }
         }
     }
 
@@ -100,7 +147,7 @@ class Program
                 isEscaping = true;
                 continue;
             }
-            
+
             if (c == Convert.ToChar("\"") && !isEscaping && !inSingleQuote)
             {
                 inDoubleQuote = !inDoubleQuote;
@@ -113,11 +160,13 @@ class Program
                 {
                     current.Append(c);
                     isEscaping = !isEscaping;
-                }else if (inDoubleQuote)
+                }
+                else if (inDoubleQuote)
                 {
                     //if in double quote, just add the whitespace
                     current.Append(c);
-                }else if (current.Length > 0)
+                }
+                else if (current.Length > 0)
                 {
                     args.Add(current.ToString());
                     current.Clear();
@@ -136,7 +185,7 @@ class Program
                     {
                         if ((i + 1) > input.Length)
                         {
-                            string isDoubleCheckString = c.ToString() + input[i+1];
+                            string isDoubleCheckString = c.ToString() + input[i + 1];
                             Console.WriteLine("Escaping, with special meaning: " + isDoubleCheckString);
                             if (stringUtils.IsDoubleSpecial(isDoubleCheckString))
                             {
@@ -152,8 +201,9 @@ class Program
                     }
                     else
                     {
-                            current.Append(c);
+                        current.Append(c);
                     }
+
                     isEscaping = !isEscaping;
                 }
             }
@@ -163,8 +213,8 @@ class Program
         {
             args.Add(current.ToString());
         }
-        
-        
+
+
         return args;
     }
 }
