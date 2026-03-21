@@ -40,6 +40,6 @@ public class Commands
             echoStringList.Add(arg);
         }
 
-        output = string.Join(" ", echoStringList.Skip(1));
+        output = string.Join(" ", echoStringList.Skip(1)) + "\n";
     }
 }

@@ -94,9 +94,10 @@ class Program
                                 prc?.WaitForExit();
                                 if (!string.IsNullOrEmpty(stdErr))
                                 {
-                                    Console.WriteLine(stdErr);
+                                    Console.Write(stdErr);
                                 }
-                                else
+
+                                if (!string.IsNullOrEmpty(stdout))
                                 {
                                     File.WriteAllText(args[redirectionIndex+1], stdout);
                                 }
@@ -108,7 +109,6 @@ class Program
                                     psi.ArgumentList.Add(args[i]);
                                 }
                                 Process.Start(psi)?.WaitForExit();
-                                Console.WriteLine();
                             }
                         }
                         else
