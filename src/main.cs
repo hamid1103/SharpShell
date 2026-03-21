@@ -17,7 +17,6 @@ class Program
         {
             Console.Write("$ ");
             string input = Console.ReadLine();
-            List<string> split = input.Split().ToList();
             List<string> args = ParseArgs(input);
             
             if (input == "exit")
@@ -47,8 +46,7 @@ class Program
                     Commands.EchoCommand(args);
                     break;
                 default:
-                    TestCommandResults resl = tester.TestCommand(split[0]);
-                    
+                    TestCommandResults resl = tester.TestCommand(args[0]);
                     if (resl.Found)
                     {
 
