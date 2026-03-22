@@ -17,6 +17,8 @@ class Program
         {
             bool RedirectStdOut = false;
             bool RedirectErrorOut = false;
+            bool RedirectAppendingStdOut = false;
+            bool RedirectAppendingErrorOut = false;
             string redirectOutputFile = "";
             string redirectErrorFile = "";
             int stdOutRedirectionIndex = 0;
@@ -26,11 +28,23 @@ class Program
             string input = Console.ReadLine();
             List<string> args = ParseArgs(input);
 
+            for(int i = 0; i < args.Count(); i++)
+            {
+                args[i] = args[i].Replace("~", UserHomePath);
+            }
+            
             if (input == "exit")
             {
                 break;
             }
 
+            if (args.Contains(">>") || args.Contains("1>>"))
+            {
+                RedirectAppendingStdOut = true;
+                stdOutRedirectionIndex = args.FindIndex(arg => arg is ">>" or "1>>");
+                redirectOutputFile = args[stdOutRedirectionIndex + 1];
+            }
+            
             if (args.Contains(">") || args.Contains("1>"))
             {
                 RedirectStdOut = true;
@@ -79,14 +93,17 @@ class Program
                         }
                         if (RedirectStdOut)
                         {
-                            File.WriteAllText(Path.Combine(Directory.GetCurrentDirectory(), redirectOutputFile),
-                                echoOutput);
+                            File.WriteAllText(redirectOutputFile, echoOutput);
+                        }else if (RedirectAppendingStdOut)
+                        {
+                           
+                            File.AppendAllText(redirectOutputFile, echoOutput);
+                            
                         }else
                         {
                             if (RedirectErrorOut)
                             {
-                                File.WriteAllText(Path.Combine(Directory.GetCurrentDirectory(), redirectErrorFile),
-                                    ExceptionString);
+                                File.WriteAllText(redirectErrorFile,ExceptionString);
                             }
                             Console.Write(echoOutput);
                         }
@@ -105,9 +122,9 @@ class Program
                             string stdout = "";
                             string stdErr = "";
 
-                            if (RedirectStdOut || RedirectErrorOut)
+                            if (RedirectStdOut || RedirectErrorOut || RedirectAppendingStdOut || RedirectAppendingErrorOut)
                             {
-                                int cutoffIndex = RedirectStdOut
+                                int cutoffIndex = (RedirectStdOut || RedirectAppendingStdOut)
                                     ? stdOutRedirectionIndex
                                     : stdErrorRedirectionIndex;
                                 for (int i = 1; i < cutoffIndex; i++)
@@ -115,19 +132,19 @@ class Program
                                     psi.ArgumentList.Add(args[i]);
                                 }
 
-                                if (RedirectStdOut)
+                                if (RedirectStdOut || RedirectAppendingStdOut)
                                 {
                                     psi.RedirectStandardOutput = true;
                                 }
 
-                                if (RedirectErrorOut)
+                                if (RedirectErrorOut || RedirectAppendingErrorOut)
                                 {
                                     psi.RedirectStandardError = true;
                                 }
 
                                 Process prc = Process.Start(psi);
-                                stdErr = RedirectErrorOut ? prc.StandardError.ReadToEnd() : "";
-                                stdout = RedirectStdOut ? prc.StandardOutput.ReadToEnd() : "";
+                                stdErr = (RedirectErrorOut || RedirectAppendingErrorOut) ? prc.StandardError.ReadToEnd() : "";
+                                stdout = (RedirectStdOut || RedirectAppendingStdOut) ? prc.StandardOutput.ReadToEnd() : "";
                                 prc?.WaitForExit();
                             }
                             else
@@ -142,19 +159,32 @@ class Program
 
                             if (!string.IsNullOrEmpty(stdErr))
                             {
-                                File.WriteAllText(redirectErrorFile, stdErr);
+                                if (RedirectAppendingErrorOut)
+                                {
+                                    File.AppendAllText(redirectErrorFile, stdErr);
+                                }
+                                else
+                                {
+                                    File.WriteAllText(redirectErrorFile, stdErr);
+                                }
                             }
 
                             if (!string.IsNullOrEmpty(stdout))
-                            {
-                                File.WriteAllText(args[stdOutRedirectionIndex + 1], stdout);
+                            { 
+                                if (RedirectAppendingStdOut)
+                                {
+                                    File.AppendAllText(redirectOutputFile, stdout);
+                                }
+                                else
+                                {
+                                    File.WriteAllText(redirectOutputFile, stdout);
+                                }
                             }
                         }
                         else
                         {
                             Console.WriteLine($"{input}: command not found");
                         }
-
                         break;
                 }
             }
