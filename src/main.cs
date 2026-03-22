@@ -67,7 +67,16 @@ class Program
                         tester.TypeCommand(args[1]);
                         break;
                     case "echo":
-                        Commands.EchoCommand(args, out var echoOutput);
+                        string echoOutput = "";
+                        string ExceptionString = "";
+                        try
+                        {
+                            Commands.EchoCommand(args, out echoOutput);
+                        }
+                        catch (Exception e)
+                        {
+                            ExceptionString = e.Message;
+                        }
                         if (RedirectStdOut)
                         {
                             File.WriteAllText(Path.Combine(Directory.GetCurrentDirectory(), redirectOutputFile),
@@ -77,7 +86,7 @@ class Program
                             if (RedirectErrorOut)
                             {
                                 File.WriteAllText(Path.Combine(Directory.GetCurrentDirectory(), redirectErrorFile),
-                                    echoOutput);
+                                    ExceptionString);
                             }
                             Console.Write(echoOutput);
                         }

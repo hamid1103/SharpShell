@@ -29,18 +29,22 @@ public class Commands
 
     public static void EchoCommand(List<string> argString, out string output)
     {
+        bool redirecting = false;
         List<string> echoStringList = new();
         foreach (var arg in argString)
         {
-            if (arg == ">" || arg == "1>" ||arg == "2>")
+            if (arg == ">" || arg == "1>" || arg == "2>")
             {
                 int lastIndex = echoStringList.FindLastIndex(x => x == echoStringList.Last());
                 echoStringList[lastIndex] = echoStringList[lastIndex] + "\n";
+                redirecting = true;
                 break;
             }
+
             echoStringList.Add(arg);
         }
 
         output = string.Join(" ", echoStringList.Skip(1));
+        if (!redirecting) output += "\n";
     }
 }
