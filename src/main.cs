@@ -72,13 +72,13 @@ class Program
                         {
                             File.WriteAllText(Path.Combine(Directory.GetCurrentDirectory(), redirectOutputFile),
                                 echoOutput);
-                        }else if (RedirectErrorOut)
+                        }else
                         {
-                            File.WriteAllText(Path.Combine(Directory.GetCurrentDirectory(), redirectErrorFile),
-                                echoOutput);
-                        }
-                        else
-                        {
+                            if (RedirectErrorOut)
+                            {
+                                File.WriteAllText(Path.Combine(Directory.GetCurrentDirectory(), redirectErrorFile),
+                                    echoOutput);
+                            }
                             Console.Write(echoOutput);
                         }
 
