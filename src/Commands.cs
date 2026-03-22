@@ -33,7 +33,7 @@ public class Commands
         List<string> echoStringList = new();
         foreach (var arg in argString)
         {
-            if (arg is ">" or "1>" or "2>" or ">>" or "1>>")
+            if (arg is ">" or "1>" or "2>" or ">>" or "1>>" or "2>>")
             {
                 int lastIndex = echoStringList.FindLastIndex(x => x == echoStringList.Last());
                 echoStringList[lastIndex] = echoStringList[lastIndex] + "\n";

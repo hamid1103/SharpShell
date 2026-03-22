@@ -138,14 +138,20 @@ class Program
                             if (RedirectStdOut || RedirectErrorOut || RedirectAppendingStdOut ||
                                 RedirectAppendingErrorOut)
                             {
-                                int cutoffIndex = (RedirectStdOut || RedirectAppendingStdOut)
-                                    ? stdOutRedirectionIndex
-                                    : stdErrorRedirectionIndex;
-                                for (int i = 1; i < cutoffIndex; i++)
+                                if (RedirectStdOut || RedirectAppendingStdOut)
                                 {
-                                    psi.ArgumentList.Add(args[i]);
+                                    for (int i = 1; i < stdOutRedirectionIndex; i++)
+                                    {
+                                        psi.ArgumentList.Add(args[i]);
+                                    }
+                                }else if (RedirectErrorOut || RedirectAppendingErrorOut)
+                                {
+                                    for (int i = 1; i < stdErrorRedirectionIndex; i++)
+                                    {
+                                        psi.ArgumentList.Add(args[i]);
+                                    }
                                 }
-
+                                
                                 if (RedirectStdOut || RedirectAppendingStdOut)
                                 {
                                     psi.RedirectStandardOutput = true;
