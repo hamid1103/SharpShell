@@ -104,6 +104,9 @@ class Program
                             if (RedirectErrorOut)
                             {
                                 File.WriteAllText(redirectErrorFile,ExceptionString);
+                            }else if (RedirectAppendingStdOut)
+                            {
+                                File.AppendAllText(redirectErrorFile, ExceptionString);
                             }
                             Console.Write(echoOutput);
                         }
