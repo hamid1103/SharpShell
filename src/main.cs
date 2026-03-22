@@ -28,11 +28,11 @@ class Program
             string input = Console.ReadLine();
             List<string> args = ParseArgs(input);
 
-            for(int i = 0; i < args.Count(); i++)
+            for (int i = 0; i < args.Count(); i++)
             {
                 args[i] = args[i].Replace("~", UserHomePath);
             }
-            
+
             if (input == "exit")
             {
                 break;
@@ -44,7 +44,7 @@ class Program
                 stdOutRedirectionIndex = args.FindIndex(arg => arg is ">>" or "1>>");
                 redirectOutputFile = args[stdOutRedirectionIndex + 1];
             }
-            
+
             if (args.Contains(">") || args.Contains("1>"))
             {
                 RedirectStdOut = true;
@@ -91,23 +91,26 @@ class Program
                         {
                             ExceptionString = e.Message;
                         }
+
                         if (RedirectStdOut)
                         {
                             File.WriteAllText(redirectOutputFile, echoOutput);
-                        }else if (RedirectAppendingStdOut)
+                        }
+                        else if (RedirectAppendingStdOut)
                         {
-                           
                             File.AppendAllText(redirectOutputFile, echoOutput);
-                            
-                        }else
+                        }
+                        else
                         {
                             if (RedirectErrorOut)
                             {
-                                File.WriteAllText(redirectErrorFile,ExceptionString);
-                            }else if (RedirectAppendingStdOut)
+                                File.WriteAllText(redirectErrorFile, ExceptionString);
+                            }
+                            else if (RedirectAppendingStdOut)
                             {
                                 File.AppendAllText(redirectErrorFile, ExceptionString);
                             }
+
                             Console.Write(echoOutput);
                         }
 
@@ -125,7 +128,8 @@ class Program
                             string stdout = "";
                             string stdErr = "";
 
-                            if (RedirectStdOut || RedirectErrorOut || RedirectAppendingStdOut || RedirectAppendingErrorOut)
+                            if (RedirectStdOut || RedirectErrorOut || RedirectAppendingStdOut ||
+                                RedirectAppendingErrorOut)
                             {
                                 int cutoffIndex = (RedirectStdOut || RedirectAppendingStdOut)
                                     ? stdOutRedirectionIndex
@@ -146,9 +150,34 @@ class Program
                                 }
 
                                 Process prc = Process.Start(psi);
-                                stdErr = (RedirectErrorOut || RedirectAppendingErrorOut) ? prc.StandardError.ReadToEnd() : "";
-                                stdout = (RedirectStdOut || RedirectAppendingStdOut) ? prc.StandardOutput.ReadToEnd() : "";
+                                stdErr = (RedirectErrorOut || RedirectAppendingErrorOut)
+                                    ? prc.StandardError.ReadToEnd()
+                                    : "";
+                                stdout = (RedirectStdOut || RedirectAppendingStdOut)
+                                    ? prc.StandardOutput.ReadToEnd()
+                                    : "";
                                 prc?.WaitForExit();
+                                
+                                //Removed empty string checks. Files should be created even if output is empty
+                                
+                                if (RedirectAppendingErrorOut)
+                                {
+                                    File.AppendAllText(redirectErrorFile, stdErr);
+                                }
+                                else if(RedirectErrorOut)
+                                {
+                                    File.WriteAllText(redirectErrorFile, stdErr);
+                                }
+
+
+                                if (RedirectAppendingStdOut)
+                                {
+                                    File.AppendAllText(redirectOutputFile, stdout);
+                                }
+                                else if(RedirectStdOut)
+                                {
+                                    File.WriteAllText(redirectOutputFile, stdout);
+                                }
                             }
                             else
                             {
@@ -159,35 +188,12 @@ class Program
 
                                 Process.Start(psi)?.WaitForExit();
                             }
-
-                            if (!string.IsNullOrEmpty(stdErr))
-                            {
-                                if (RedirectAppendingErrorOut)
-                                {
-                                    File.AppendAllText(redirectErrorFile, stdErr);
-                                }
-                                else
-                                {
-                                    File.WriteAllText(redirectErrorFile, stdErr);
-                                }
-                            }
-
-                            if (!string.IsNullOrEmpty(stdout))
-                            { 
-                                if (RedirectAppendingStdOut)
-                                {
-                                    File.AppendAllText(redirectOutputFile, stdout);
-                                }
-                                else
-                                {
-                                    File.WriteAllText(redirectOutputFile, stdout);
-                                }
-                            }
                         }
                         else
                         {
                             Console.WriteLine($"{input}: command not found");
                         }
+
                         break;
                 }
             }
