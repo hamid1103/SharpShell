@@ -45,6 +45,13 @@ class Program
                 redirectOutputFile = args[stdOutRedirectionIndex + 1];
             }
 
+            if (args.Contains("2>>"))
+            {
+                RedirectAppendingErrorOut = true;
+                stdErrorRedirectionIndex = args.FindIndex(arg => arg is "2>>");
+                redirectErrorFile = args[stdErrorRedirectionIndex + 1];
+            }
+
             if (args.Contains(">") || args.Contains("1>"))
             {
                 RedirectStdOut = true;
